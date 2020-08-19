@@ -8,11 +8,22 @@ ul {
   padding-left: 30px;
 }
 
+.row {
+  display: flex;
+
+}
+
+p {
+  margin : 0;
+  padding: 0;
+}
+
+/* 
 .board-row:after {
   clear  : both;
   content: "";
   display: table;
-}
+} */
 
 .status {
   margin-bottom: 10px;
