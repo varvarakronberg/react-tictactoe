@@ -48,6 +48,15 @@ class Board extends React.Component {
   }
 }
 
+function Toggle(props) {
+  return (
+    <button onClick={props.onClick}>
+      {props.isToggleDesc ? 'DESC' : 'ASC'}
+    </button>
+  );
+}
+
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -57,9 +66,11 @@ class Game extends React.Component {
         move: null,
       }],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      isOrderDesc: false
     }
   };
+
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -89,17 +100,21 @@ class Game extends React.Component {
     })
   }
 
+  onSortToggleClick() {
+    this.setState({ isOrderDesc: !this.state.isOrderDesc });
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step, move) => {
+    let moves = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move + `, (col:${step.move.col}, row:${step.move.row})` :
         'Go to game start';
       return (
-        <li key={move}>
+        <li id={move}>
           <button style={this.state.stepNumber === move ? { fontWeight: 'bold' } : { fontWeight: 'normal' }} onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
       )
@@ -109,6 +124,11 @@ class Game extends React.Component {
       status = 'Winner: ' + winner;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
+
+
+    if (this.state.isOrderDesc) {
+      moves = moves.reverse()
     }
 
     return (
@@ -121,16 +141,21 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ol reversed={this.state.isOrderDesc}>{moves}</ol>
+          <div>
+            <Toggle onClick={() => this.onSortToggleClick()} isToggleDesc={this.state.isOrderDesc} />
+          </div>
         </div>
       </div>
     );
   }
 }
 
+
 // ========================================
 
 ReactDOM.render(<Game />, document.getElementById("root"));
+
 
 // helper function to calculate the winner line from a one dimensional array of all the lines arrays:
 function calculateWinner(squares) {
